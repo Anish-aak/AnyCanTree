@@ -24,11 +24,11 @@ class Node{
     public:
         std::unordered_map<std::string,Node *> children;
         std::string key;
-        int count;
+        int count, endCount;
         std::unordered_map<std::string, bufferNode> buffer;
 
-        Node(std::string k = "", int c = 0)
-            : key(k), count(c){}
+        Node(std::string k = "", int c = 0, int ec = 0)
+            : key(k), count(c), endCount(ec){}
 
 };
 
@@ -87,6 +87,23 @@ class CanTree{
             }
         }
 
+        std::vector<std::vector<std::string>> dfsTraversal;
+        void dfs(Node * root, std::vector<std::string> &tr) {
+            if(root == NULL) return;
+            tr.push_back(root->key);
+            std::vector<std::string> temp;
+            for(auto &j: tr) {
+                temp.push_back(j);
+            }
+            for(int i = 0; i < root->endCount; i++) {
+                dfsTraversal.push_back(temp);
+            }
+            for(auto &i: root->children) {
+                dfs(i.second, tr);
+            }
+            tr.pop_back();
+        }
+
     public:
         Node * root;
         int size;
@@ -98,6 +115,7 @@ class CanTree{
 
         void insert_node(std::vector<std::string> &tr, double time_allowance){
             Node * t = root;
+            std::sort(tr.begin(), tr.end());
             auto start = std::chrono::high_resolution_clock::now();
             for(int i = 0; i < (int)tr.size(); i++) {
                 auto p = tr[i];
@@ -117,6 +135,7 @@ class CanTree{
                 t->buffer.erase(p);
                 t = t->children[p];
             }
+            t->endCount++;
             // for(auto& p : tr){
             //     if(t->children.find(p)==t->children.end()){
             //         Node * new_node = new Node(p,1);
@@ -129,13 +148,17 @@ class CanTree{
             // }
         }
 
-        std::vector<std::vector<std::string>> traversal(){
+        std::vector<std::vector<std::string>> bfsT(){
             bfsTraversal.clear();
             bfs(root);
             return bfsTraversal;
         }
 
-
+        std::vector<std::vector<std::string>> dfsT() {
+            std::vector<std::string> temp;
+            dfs(root, temp);
+            return dfsTraversal;
+        }
 
 };
 

@@ -50,15 +50,28 @@ int main(int argc, char * argv[]){
     //     tree->insert_node(v);
     // }
     for(int i = 0; i < (int)db.size(); i++) {
-        tree->insert_node(db[i], time_allowance[i]);
+        tree->insert_node(db[i],1e5);
     }
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop-start);
-    std::vector<std::vector<std::string>> x = tree->traversal();
-    for(auto& v : x){
-        for(auto &str : v) 
-            f_result<<str<<" ";
-        f_result<<'\n';
+    // std::vector<std::vector<std::string>> x = tree->traversal();
+    // for(auto& v : x){
+    //     for(auto &str : v) 
+    //         f_result<<str<<" ";
+    //     f_result<<'\n';
+    // }
+
+    auto v = tree->dfsT();
+    for(auto &p: v) {
+        std::sort(p.begin(), p.end());
+    }
+    std::sort(v.begin(), v.end());
+
+    for(auto &p: v) {
+        for(auto &q: p) {
+            std::cout << q << ' ';
+        }
+        std::cout << '\n';
     }
     f_perf<<duration.count()<<"\n";
     f_perf.close();
