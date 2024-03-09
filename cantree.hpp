@@ -9,6 +9,9 @@
 #include<unordered_map>
 #include<chrono>
 #include<queue>
+#include<cassert>
+
+#define BUFFER_SIZE 1
 
 class bufferNode {
     public:
@@ -24,11 +27,11 @@ class Node{
     public:
         std::unordered_map<std::string,Node *> children;
         std::string key;
-        int count, endCount;
+        int count, endCount, bufferCount;
         std::unordered_map<std::string, bufferNode> buffer;
 
-        Node(std::string k = "", int c = 0, int ec = 0)
-            : key(k), count(c), endCount(ec){}
+        Node(std::string k = "", int c = 0, int ec = 0, int bc = 0)
+            : key(k), count(c), endCount(ec), bufferCount(bc){}
 
 };
 
@@ -37,8 +40,9 @@ class CanTree{
 
     private:
         void interrupt(std::vector<std::string> &tr, int index, Node *cur) {
-            std::vector<std::string> toStore(tr.begin() + index + 1, tr.end());
-            // cur->buffer[tr[index]] = bufferNode(tr[index], );
+            if(cur->bufferCount >= BUFFER_SIZE) return;
+            cur->bufferCount += 1;
+            std::vector<std::string> toStore(tr.begin() + index, tr.end());
             if(cur->buffer.find(tr[index]) == cur->buffer.end()) {
                 cur->buffer[tr[index]] = bufferNode(tr[index], 1);
             } else {
@@ -59,9 +63,12 @@ class CanTree{
 
         void hitchHiker(Node *t, std::string p) {
             Node *child = t->children[p];
+            t->bufferCount -= t->buffer[p].count;
             for(auto &v: t->buffer[p].transList) {
                 child->count += 1;
                 if(v.empty()) continue;
+                if(child->bufferCount >= BUFFER_SIZE) break;
+                child->bufferCount += 1;
                 std::vector<std::string> toStore(v.begin() + 1, v.end());
                 // insertNextLevel(child, v[0], toStore);
                 child->buffer[v[0]].transList.push_back(toStore);
@@ -113,14 +120,14 @@ class CanTree{
         
         ~CanTree(){}
 
-        void insert_node(std::vector<std::string> &tr, double time_allowance){
+        void insert_node(Node * root, std::vector<std::string> &tr, double time_allowance){
             Node * t = root;
             std::sort(tr.begin(), tr.end());
             auto start = std::chrono::high_resolution_clock::now();
             for(int i = 0; i < (int)tr.size(); i++) {
                 auto p = tr[i];
                 auto stop = std::chrono::high_resolution_clock::now();
-                auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop-start);
+                auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(stop-start);
                 if(duration.count() > (int)(time_allowance * 1000)) {
                     return interrupt(tr, i, t);
                 }
@@ -136,16 +143,6 @@ class CanTree{
                 t = t->children[p];
             }
             t->endCount++;
-            // for(auto& p : tr){
-            //     if(t->children.find(p)==t->children.end()){
-            //         Node * new_node = new Node(p,1);
-            //         t->children[p] = new_node;
-            //         size++;
-            //     }else{
-            //         t->children[p]->count++;
-            //     }
-            //     t = t->children[p];
-            // }
         }
 
         std::vector<std::vector<std::string>> bfsT(){
@@ -158,6 +155,18 @@ class CanTree{
             std::vector<std::string> temp;
             dfs(root, temp);
             return dfsTraversal;
+        }
+
+        void flushBuffers(Node * root) {
+            if(root == NULL) return;
+            for(auto &p: root->buffer) {
+                for(auto &q: p.second.transList) {
+                    insert_node(root, q, 1e5);
+                }
+            }
+            for(auto &v: root->children) {
+                flushBuffers(v.second);
+            }
         }
 
 };

@@ -39,7 +39,7 @@ int main(int argc, char * argv[]){
     f_perf.open(std::string(argv[2]));
     f_result.open(std::string(argv[3]));
 
-    int stream_speed = 100;
+    int stream_speed = 1;
     std::vector<double> time_allowance;
     readTimeAllowance(time_allowance, stream_speed);
 
@@ -50,7 +50,8 @@ int main(int argc, char * argv[]){
     //     tree->insert_node(v);
     // }
     for(int i = 0; i < (int)db.size(); i++) {
-        tree->insert_node(db[i],1e5);
+        tree->insert_node(tree->root, db[i], time_allowance[i]);
+        // std::cout << time_allowance[i] << ' ';
     }
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop-start);
@@ -61,19 +62,20 @@ int main(int argc, char * argv[]){
     //     f_result<<'\n';
     // }
 
+    tree->flushBuffers(tree->root);
     auto v = tree->dfsT();
     for(auto &p: v) {
         std::sort(p.begin(), p.end());
     }
     std::sort(v.begin(), v.end());
 
-    for(auto &p: v) {
-        for(auto &q: p) {
-            std::cout << q << ' ';
-        }
-        std::cout << '\n';
-    }
-    f_perf<<duration.count()<<"\n";
+    // for(auto &p: v) {
+    //     for(auto &q: p) {
+    //         std::cout << q << ' ';
+    //     }
+    //     std::cout << '\n';
+    // }
+    // f_perf<<duration.count()<<"\n";
     f_perf.close();
     f_result.close();
 
