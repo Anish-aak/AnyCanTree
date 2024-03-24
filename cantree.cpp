@@ -50,7 +50,7 @@ int main(int argc, char * argv[]){
     //     tree->insert_node(v);
     // }
     for(int i = 0; i < (int)db.size(); i++) {
-        tree->insert_node(tree->root, db[i], time_allowance[i]);
+        tree->insert_node(tree->root, db[i], 1e9);
         // std::cout << time_allowance[i] << ' ';
     }
     auto stop = std::chrono::high_resolution_clock::now();
@@ -62,20 +62,20 @@ int main(int argc, char * argv[]){
     //     f_result<<'\n';
     // }
 
-    tree->flushBuffers(tree->root);
+    // tree->flushBuffers(tree->root);
     auto v = tree->dfsT();
     for(auto &p: v) {
         std::sort(p.begin(), p.end());
     }
     std::sort(v.begin(), v.end());
 
-    // for(auto &p: v) {
-    //     for(auto &q: p) {
-    //         std::cout << q << ' ';
-    //     }
-    //     std::cout << '\n';
-    // }
-    // f_perf<<duration.count()<<"\n";
+    for(auto &p: v) {
+        for(auto &q: p) {
+            f_result << q << ' ';
+        }
+        f_result << '\n';
+    }
+    f_perf<<duration.count()<<"\n";
     f_perf.close();
     f_result.close();
 
