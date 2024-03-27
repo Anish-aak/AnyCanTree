@@ -1,5 +1,6 @@
 #include "cantree.hpp"
 #include<sstream>
+using namespace std;
 
 std::vector<std::vector<std::string>> scanDB(const std::string& path, char separation) {
     std::vector<std::vector<std::string>> db;
@@ -39,9 +40,13 @@ int main(int argc, char * argv[]){
     f_perf.open(std::string(argv[2]));
     f_result.open(std::string(argv[3]));
 
-    int stream_speed = 1;
+    int stream_speed = 10;
     std::vector<double> time_allowance;
     readTimeAllowance(time_allowance, stream_speed);
+    int m = time_allowance.size();
+    // cout<<db.size()<<" "<<time_allowance.size()<<endl;
+    // for(double d : time_allowance) cout<<d<<" ";
+    // cout<<endl;
 
     Node * root = new Node();
     CanTree * tree = new CanTree(root);
@@ -50,22 +55,23 @@ int main(int argc, char * argv[]){
     //     tree->insert_node(v);
     // }
     for(int i = 0; i < (int)db.size(); i++) {
-        tree->insert_node(tree->root, db[i], 1e9);
-        // std::cout << time_allowance[i] << ' ';
+        tree->insert_node(tree->root, db[i], time_allowance[i]);
+        // std::cout << time_allowance[i] << endl;
     }
     auto stop = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop-start);
-    // std::vector<std::vector<std::string>> x = tree->traversal();
+    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(stop-start);
+    std::vector<std::vector<std::string>> x = tree->bfsT();
     // for(auto& v : x){
     //     for(auto &str : v) 
     //         f_result<<str<<" ";
     //     f_result<<'\n';
     // }
 
-    // tree->flushBuffers(tree->root);
+    tree->flushBuffers(tree->root);
     auto v = tree->dfsT();
     for(auto &p: v) {
         std::sort(p.begin(), p.end());
+
     }
     std::sort(v.begin(), v.end());
 

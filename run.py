@@ -42,16 +42,20 @@ def calculate_metrics(original_rules, res_rules):
     return precision, recall, accuracy
 
 # Read transactions
-original_transactions = read_transactions('sortedip.txt')
+original_transactions = read_transactions('ip.txt')
 res_transactions = read_transactions('res.txt')
 
 # Convert to dataframes
 original_df = transactions_to_df(original_transactions)
 res_df = transactions_to_df(res_transactions)
 
+
+
 # Get frequent itemsets
 original_frequent_itemsets = get_frequent_itemsets(original_df)
 res_frequent_itemsets = get_frequent_itemsets(res_df)
+
+print(res_frequent_itemsets)
 
 # Generate rules
 original_rules = generate_rules(original_frequent_itemsets)
@@ -59,6 +63,10 @@ res_rules = generate_rules(res_frequent_itemsets)
 
 # Calculate metrics
 precision, recall, accuracy = calculate_metrics(original_rules, res_rules)
+# precision, recall, accuracy = calculate_metrics(original_frequent_itemsets, res_frequent_itemsets)
+# print(original_frequent_itemsets)
+# print("GAAAAAPPP")
+# print(res_frequent_itemsets)
 
 print(f"Precision: {precision}")
 print(f"Recall: {recall}")
