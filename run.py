@@ -27,22 +27,22 @@ def generate_rules(frequent_itemsets):
     return rules
 
 # Calculate precision, recall, and F1
-def calculate_metrics(original_rules_df, res_rules_df):
-    # Convert rules DataFrames to sets of frozensets for comparison
-    original_rules_set = set(frozenset(tuple(rule)) for rule in original_rules_df[['antecedents', 'consequents']].itertuples(index=False, name=None))
-    res_rules_set = set(frozenset(tuple(rule)) for rule in res_rules_df[['antecedents', 'consequents']].itertuples(index=False, name=None))
+def calculate_metrics_itemsets(original_itemsets_df, res_itemsets_df):
+    # Convert itemsets DataFrames to sets for comparison
+    original_itemsets_set = set(frozenset(itemset) for itemset in original_itemsets_df['itemsets'])
+    res_itemsets_set = set(frozenset(itemset) for itemset in res_itemsets_df['itemsets'])
     
-    # True Positives (TP): Rules present in both original and res
-    TP = len(original_rules_set.intersection(res_rules_set))
-    # False Positives (FP): Rules present in res but not in original
-    FP = len(res_rules_set - original_rules_set)
-    # False Negatives (FN): Rules present in original but not in res
-    FN = len(original_rules_set - res_rules_set)
+    # True Positives (TP): Itemsets present in both original and res
+    TP = len(original_itemsets_set.intersection(res_itemsets_set))
+    # False Positives (FP): Itemsets present in res but not in original
+    FP = len(res_itemsets_set - original_itemsets_set)
+    # False Negatives (FN): Itemsets present in original but not in res
+    FN = len(original_itemsets_set - res_itemsets_set)
     
     # Compute precision, recall, and F1
     precision = TP / (TP + FP) if (TP + FP) > 0 else 0
     recall = TP / (TP + FN) if (TP + FN) > 0 else 0
-    F1 = (2 * precision * recall)/(precision + recall) if (precision + recall) > 0 else 0
+    F1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
     
     return precision, recall, F1
 
@@ -63,8 +63,8 @@ original_rules = generate_rules(original_frequent_itemsets)
 res_rules = generate_rules(res_frequent_itemsets)
 
 # Calculate metrics
-precision, recall, F1 = calculate_metrics(original_rules, res_rules)
+precision_itemsets, recall_itemsets, F1_itemsets = calculate_metrics_itemsets(original_frequent_itemsets, res_frequent_itemsets)
 
-print(f"Precision: {precision}")
-print(f"Recall: {recall}")
-print(f"F1: {F1}")
+print(f"Precision for Itemsets: {precision_itemsets}")
+print(f"Recall for Itemsets: {recall_itemsets}")
+print(f"F1 for Itemsets: {F1_itemsets}")
