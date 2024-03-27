@@ -26,7 +26,7 @@ def generate_rules(frequent_itemsets):
     rules = association_rules(frequent_itemsets, metric="confidence", min_threshold=0.5)
     return rules
 
-# Calculate precision, recall, and accuracy
+# Calculate precision, recall, and F1
 def calculate_metrics(original_rules_df, res_rules_df):
     # Convert rules DataFrames to sets of frozensets for comparison
     original_rules_set = set(frozenset(tuple(rule)) for rule in original_rules_df[['antecedents', 'consequents']].itertuples(index=False, name=None))
@@ -39,12 +39,12 @@ def calculate_metrics(original_rules_df, res_rules_df):
     # False Negatives (FN): Rules present in original but not in res
     FN = len(original_rules_set - res_rules_set)
     
-    # Compute precision, recall, and accuracy
+    # Compute precision, recall, and F1
     precision = TP / (TP + FP) if (TP + FP) > 0 else 0
     recall = TP / (TP + FN) if (TP + FN) > 0 else 0
-    accuracy = TP / (TP + FP + FN) if (TP + FP + FN) > 0 else 0
+    F1 = (2 * precision * recall)/(precision + recall) if (precision + recall) > 0 else 0
     
-    return precision, recall, accuracy
+    return precision, recall, F1
 
 # Read transactions
 original_transactions = read_transactions('sortedip.txt')
@@ -63,8 +63,8 @@ original_rules = generate_rules(original_frequent_itemsets)
 res_rules = generate_rules(res_frequent_itemsets)
 
 # Calculate metrics
-precision, recall, accuracy = calculate_metrics(original_rules, res_rules)
+precision, recall, F1 = calculate_metrics(original_rules, res_rules)
 
 print(f"Precision: {precision}")
 print(f"Recall: {recall}")
-print(f"Accuracy: {accuracy}")
+print(f"F1: {F1}")
