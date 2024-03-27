@@ -27,14 +27,19 @@ def generate_rules(frequent_itemsets):
     return rules
 
 # Calculate precision, recall, and accuracy
-def calculate_metrics(original_rules, res_rules):
-    # True Positives (TP): Rules present in both original and res
-    TP = len(set(res_rules).intersection(set(original_rules)))
-    # False Positives (FP): Rules present in res but not in original
-    FP = len(set(res_rules) - set(original_rules))
-    # False Negatives (FN): Rules present in original but not in res
-    FN = len(set(original_rules) - set(res_rules))
+def calculate_metrics(original_rules_df, res_rules_df):
+    # Convert rules DataFrames to sets of frozensets for comparison
+    original_rules_set = set(frozenset(tuple(rule)) for rule in original_rules_df[['antecedents', 'consequents']].itertuples(index=False, name=None))
+    res_rules_set = set(frozenset(tuple(rule)) for rule in res_rules_df[['antecedents', 'consequents']].itertuples(index=False, name=None))
     
+    # True Positives (TP): Rules present in both original and res
+    TP = len(original_rules_set.intersection(res_rules_set))
+    # False Positives (FP): Rules present in res but not in original
+    FP = len(res_rules_set - original_rules_set)
+    # False Negatives (FN): Rules present in original but not in res
+    FN = len(original_rules_set - res_rules_set)
+    
+    # Compute precision, recall, and accuracy
     precision = TP / (TP + FP) if (TP + FP) > 0 else 0
     recall = TP / (TP + FN) if (TP + FN) > 0 else 0
     accuracy = TP / (TP + FP + FN) if (TP + FP + FN) > 0 else 0
