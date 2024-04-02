@@ -11,7 +11,7 @@
 #include<queue>
 #include<cassert>
 
-#define BUFFER_SIZE 10
+#define BUFFER_SIZE 100
 using namespace std;
 
 class bufferNode {
@@ -65,7 +65,7 @@ class CanTree{
                 cur->buffer[tr[index]].count += 1;
             }
             cur->buffer[tr[index]].transList.push_back(toStore);
-            print_buffer(cur);
+            // print_buffer(cur);
         }
 
 
@@ -139,7 +139,7 @@ class CanTree{
                 auto stop = std::chrono::high_resolution_clock::now();
                 auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(stop-start);
                 if(duration.count() > (int)(time_allowance * 1000)) {
-                    cout<<"interrupttt"<<" "<<tr[i]<<endl;
+                    // cout<<"interrupttt"<<" "<<tr[i]<<endl;
                     return interrupt(tr, i, t);
                 }
                 if(t->children.find(p)==t->children.end()){

@@ -38,11 +38,12 @@ def calculate_metrics_itemsets(original_itemsets_df, res_itemsets_df):
     FP = len(res_itemsets_set - original_itemsets_set)
     # False Negatives (FN): Itemsets present in original but not in res
     FN = len(original_itemsets_set - res_itemsets_set)
+    print(TP, FP, FN)
     
     # Compute precision, recall, and F1
     precision = TP / (TP + FP) if (TP + FP) > 0 else 0
     recall = TP / (TP + FN) if (TP + FN) > 0 else 0
-    F1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
+    F1 = (2 * (precision * recall)) / (precision + recall) if (precision + recall) > 0 else 0
     
     return precision, recall, F1
 
@@ -58,9 +59,12 @@ res_df = transactions_to_df(res_transactions)
 original_frequent_itemsets = get_frequent_itemsets(original_df)
 res_frequent_itemsets = get_frequent_itemsets(res_df)
 
-# Generate rules
-original_rules = generate_rules(original_frequent_itemsets)
-res_rules = generate_rules(res_frequent_itemsets)
+print(original_frequent_itemsets['itemsets'])
+print(res_frequent_itemsets['itemsets'])
+
+# # Generate rules
+# original_rules = generate_rules(original_frequent_itemsets)
+# res_rules = generate_rules(res_frequent_itemsets)
 
 # Calculate metrics
 precision_itemsets, recall_itemsets, F1_itemsets = calculate_metrics_itemsets(original_frequent_itemsets, res_frequent_itemsets)

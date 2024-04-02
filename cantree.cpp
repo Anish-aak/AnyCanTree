@@ -40,7 +40,7 @@ int main(int argc, char * argv[]){
     f_perf.open(std::string(argv[2]));
     f_result.open(std::string(argv[3]));
 
-    int stream_speed = 10;
+    int stream_speed = 1000;
     std::vector<double> time_allowance;
     readTimeAllowance(time_allowance, stream_speed);
     int m = time_allowance.size();
@@ -70,11 +70,9 @@ int main(int argc, char * argv[]){
     tree->flushBuffers(tree->root);
     auto v = tree->dfsT();
     for(auto &p: v) {
-        std::sort(p.begin(), p.end());
-
+        std::sort(p.begin() + 1, p.end());
     }
-    std::sort(v.begin(), v.end());
-
+    sort(v.begin(), v.end());
     for(auto &p: v) {
         for(auto &q: p) {
             f_result << q << ' ';
